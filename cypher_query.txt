@@ -1,0 +1,73 @@
+
+=================== link to the reference document
+https://neo4j.com/docs/cypher-manual/current/introduction/
+
+
+********************************************************************************* Create
+--------------------------- Create a Node in Database
+CREATE (sleeplessInSeattle:Movie {title: 'Sleepless In Seattle', released: 1993})
+CREATE (nora:Person:Director {name: 'Nora Ephron', born: 1941})
+CREATE (tom:Person:Actor {name: 'Tom Hanks', born: 1956})
+CREATE (meg:Person:Actor {name: 'Meg Ryan', born: 1961})
+
+********************************************************************************* Delete
+--------------------------- Delete a Node with relationship from Database
+MATCH (p:Person {name: 'Tom Hanks'}) DETACH DELETE p
+
+MATCH (p) DETACH DELETE p    //delete everything
+
+
+--------------------------- Delete an isolated node from Database
+MATCH (p:Person {name: 'Tom Hanks'}) DELETE p
+
+MATCH (n:Person {name: 'Tom Hanks'}) REMOVE n.age  // remove an attribute of a given person
+
+MATCH (p:Person:Director {name: 'Nora Ephron'})-[r:Director]->() DELETE r  //remove a specific relationship between a designated node and all nodes 
+
+MATCH (p:Person:Actor)-[r:ACTED_IN]->(m:Movie) DELETE r  //delete all relationships between actors and movies
+
+--------------------------- Delete a Database
+DROP DATABASE actors IF EXISTS
+
+
+
+********************************************************************************* Update Attributes
+--------------------------- Update Attributes from a node
+MATCH (p:Person:Actor {name: 'Tom Hanks'})
+SET p.age = 67, p.city = 'Los Angeles', p.status = 'Active'
+RETURN p
+
+MATCH (p:Person:Actor {name: 'Tom Hanks'})
+SET p = {name: 'Tom Hanks', age: 67}
+
+
+********************************************************************************* Define Relationship
+--------------------------- Create Relationship
+MATCH (nora:Person:Director {name: 'Nora Ephron'})
+MATCH (sleeplessInSeattle:Movie {title: 'Sleepless In Seattle'})
+MERGE (nora)-[:Directed]->(sleeplessInSeattle)
+RETURN nora, sleeplessInSeattle
+
+MATCH (meg:Person:Actor {name: 'Meg Ryan'})
+MATCH (sleeplessInSeattle:Movie {title: 'Sleepless In Seattle'})
+MERGE (meg)-[:ACTED_IN]->(sleeplessInSeattle)
+RETURN meg, sleeplessInSeattle
+
+MATCH (tom:Person:Actor {name: 'Tom Hanks'})
+MATCH (sleeplessInSeattle:Movie {title: 'Sleepless In Seattle'})
+MERGE (tom)-[:ACTED_IN]->(sleeplessInSeattle)
+RETURN tom, sleeplessInSeattle
+
+
+********************************************************************************* Show Database
+--------------------------- Reveal Data of the Database
+MATCH (n) RETURN n LIMIT 25  // Limit is optional
+
+MATCH (p:Person) RETURN p // show all nodes with label person
+
+MATCH (n) RETURN count(n) AS totalNodes //Count all nodes
+
+MATCH (p:Person {name: 'Tom Hanks'})-[r]->(neighbor)
+RETURN r, neighbor
+
+MATCH (n)-[r]->(m) RETURN n, r, m //shows all nodes and edges
